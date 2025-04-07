@@ -1,7 +1,15 @@
 import mongoose from "mongoose";
 
+process.loadEnvFile()
+
+const URI_DB = process.env.URI_DB || ""
+
 const connectDB = async () => {
-  await mongoose.connect("mongodb://localhost:27017/")
-  console.log("conectado")
+  try {
+    await mongoose.connect(URI_DB)
+    console.log("conectado")
+  } catch (error) {
+    console.log("error al aconectar")
+  }
 }
 export { connectDB };
