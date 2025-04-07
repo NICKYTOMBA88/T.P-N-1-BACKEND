@@ -1,1 +1,3 @@
-console.log("estamos conectados")
+import { connectDB } from "./config/mongo";
+
+connectDB()
