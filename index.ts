@@ -51,7 +51,17 @@ const createUser = async () => {
     await user.save() //Quiere decir inserOne() en mongodb
     console.log("Usuario registrado")
   } catch (error) {
-    console.log("error al registrar el usuario")
+    console.log("error al registrar el usuario.", error)
   }
 }
 createUser()
+
+const getUser = async () => {
+  try {
+    const user = await User.find()
+    console.log(user)
+  } catch (error) {
+    console.log("error al mostrar usuarios", error)
+  }
+}
+getUser()
