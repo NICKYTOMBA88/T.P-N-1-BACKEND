@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, ObjectId, Schema } from "mongoose";
 import { connectDB } from "./config/mongo";
 
 connectDB()
@@ -41,10 +41,10 @@ const User = mongoose.model<UserIterface>("User", userSchema)
 const createUser = async () => {
   try {
     const user: UserIterface = new User({
-      name: "Nicolas",
-      email: "nicolas@gmail.com",
+      name: "Mariano",
+      email: "mariano@gmail.com",
       city: "Mendoza",
-      age: 22,
+      age: 45,
       role: "user"
     })
 
@@ -54,14 +54,27 @@ const createUser = async () => {
     console.log("error al registrar el usuario.", error)
   }
 }
-createUser()
+
 
 const getUser = async () => {
   try {
-    const user = await User.find()
+    const user = await User.find({}, { _id: 0 }) //find() es para buscar en la base de datos algun usuario, ademas usamos proyeccion en el segundo objeto en el parametro de find.
     console.log(user)
   } catch (error) {
     console.log("error al mostrar usuarios", error)
   }
 }
-getUser()
+
+
+const getUserById = async (id: mongoose.Types.ObjectId) => {
+  try {
+    const user = await User.findById(id)
+    console.log(user)
+  } catch (error) {
+    console.log("error al mostrar usuarios", error)
+  }
+}
+
+const id = new mongoose.Types.ObjectId("67f67d6475f25f426a0a22d6")
+
+getUserById(id); 
