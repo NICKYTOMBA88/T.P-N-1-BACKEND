@@ -1,4 +1,4 @@
-import mongoose, { Document, ObjectId, Schema } from "mongoose";
+import mongoose, { Document, mongo, ObjectId, Schema, Types } from "mongoose";
 import { connectDB } from "./config/mongo";
 
 connectDB()
@@ -31,7 +31,7 @@ const userSchema: Schema = new Schema<UserIterface>({
     type: String, required: true, enum: ["user", "admin"], default: "user"
   },
   age: { type: Number, required: true, min: 18, max: 100 }
-}, { timestamps: false, versionKey: false })
+}, { timestamps: false, versionKey: false, id: false })
 
 userSchema.set("strict", true) //esto es para que no acepte cualquier propiedad que se agregue
 
@@ -59,22 +59,32 @@ const createUser = async () => {
 const getUser = async () => {
   try {
     const user = await User.find({}, { _id: 0 }) //find() es para buscar en la base de datos algun usuario, ademas usamos proyeccion en el segundo objeto en el parametro de find.
-    console.log(user)
+    return user
   } catch (error) {
     console.log("error al mostrar usuarios", error)
   }
 }
 
 
-const getUserById = async (id: mongoose.Types.ObjectId) => {
+const getUserByName = async (name: string) => {
   try {
-    const user = await User.findById(id)
+
+    const users = await getUser();
+
+    const user = users?.find(user => user.name.toLocaleLowerCase().includes(name.toLocaleLowerCase()))
+
     console.log(user)
+
+    // if (!user) {
+    //   console.log("no existe el usuario")
+    // } else {
+    //   console.log(user)
+    // }
+
+    console.log(user);
   } catch (error) {
     console.log("error al mostrar usuarios", error)
   }
 }
 
-const id = new mongoose.Types.ObjectId("67f67d6475f25f426a0a22d6")
-
-getUserById(id); 
+getUserByName("mAri")
