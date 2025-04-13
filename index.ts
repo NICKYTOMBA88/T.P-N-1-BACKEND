@@ -1,90 +1,93 @@
-import mongoose, { Document, mongo, ObjectId, Schema, Types } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { connectDB } from "./config/mongo";
 
-connectDB()
+connectDB();
 
-//usuario
-// name -> string , requerido
-// email-> string , requerido , regex
-// city -> string , requerido
-// role -> string (admin, user) , requerido
-// age  -> number , requerido
-
-
-//Interface para typescript para mi sistema
-interface UserIterface extends Document {
-  name: string
-  email: string
-  city: string
-  role?: "user" | "admin"
-  age: number
+// Interface
+interface TireSize extends Document {
+  width: number;
+  profile: number;
+  rolled: number;
 }
 
-//Esquema o molde para los datos una vez que son enviados a la base de datos
-// Un esquema espera a un objeto para definir todas las propiedades
-// valida las propiedades antes de guardarlas en la base de datos
-const userSchema: Schema = new Schema<UserIterface>({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true, match: /^[\w.%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ },
-  city: { type: String, required: true },
-  role: {
-    type: String, required: true, enum: ["user", "admin"], default: "user"
-  },
-  age: { type: Number, required: true, min: 18, max: 100 }
-}, { timestamps: false, versionKey: false, id: false })
+// Esquema
+const tireSchema: Schema = new Schema<TireSize>({
+  width: { type: Number, required: true },
+  profile: { type: Number, required: true },
+  rolled: { type: Number, required: true },
+});
 
-userSchema.set("strict", true) //esto es para que no acepte cualquier propiedad que se agregue
+tireSchema.set("strict", true);
 
-const User = mongoose.model<UserIterface>("User", userSchema)
+const Tire = mongoose.model<TireSize>("Tire", tireSchema);
 
-// Es una funcion asyncrona por que esto va a la base de datos e intenta hacer algo en este caso crear un usuario
-const createUser = async () => {
+// Crear neumático
+const createTire = async () => {
   try {
-    const user: UserIterface = new User({
-      name: "Mariano",
-      email: "mariano@gmail.com",
-      city: "Mendoza",
-      age: 45,
-      role: "user"
-    })
+    const tire = new Tire({
+      width: 185,
+      profile: 65,
+      rolled: 14,
+    });
 
-    await user.save() //Quiere decir inserOne() en mongodb
-    console.log("Usuario registrado")
+    await tire.save();
+    console.log("Neumático agregado");
   } catch (error) {
-    console.log("error al registrar el usuario.", error)
+    console.log("Error al agregar neumático:", error);
   }
-}
+};
 
-
-const getUser = async () => {
+// Mostrar neumáticos
+const getTires = async () => {
   try {
-    const user = await User.find({}, { _id: 0 }) //find() es para buscar en la base de datos algun usuario, ademas usamos proyeccion en el segundo objeto en el parametro de find.
-    return user
+    const tires = await Tire.find();
+    tires.forEach((t) => {
+      console.log(`${t.width}/${t.profile}-${t.rolled}`);
+    });
   } catch (error) {
-    console.log("error al mostrar usuarios", error)
+    console.log("Error al obtener neumáticos:", error);
   }
-}
+};
+
+// const getUserByName = async (name: string) => {
+//   try {
+//     const users = await getUser();
+//     const user = await User.findOne({ name: { $regex: name, $options: "i" } })
+//     console.log(user)
+//   } catch (error) {
+//     console.log("error al mostrar usuarios", error)
+//   }
+// }
 
 
-const getUserByName = async (name: string) => {
-  try {
+// const updateUser = async (id: string, body: object) => {
+//   try {
+//     const updatedUser = await User.findByIdAndUpdate(id, body, { new: true })
+//     if (!updatedUser) {
+//       console.log("no se encuentra el usuario");
+//     } else {
+//       console.log(updatedUser);
+//     }
 
-    const users = await getUser();
+//   } catch (error) {
+//     console.log("error al actualizar usuario")
+//   }
+// }
 
-    const user = users?.find(user => user.name.toLocaleLowerCase().includes(name.toLocaleLowerCase()))
 
-    console.log(user)
+// // deleteUser("67f67d6475f25f426a0a22d6")
+// const deleteUser = async (id: string) => {
+//   const deletedUser = await User.findByIdAndDelete(id)
+//   try {
+//     if (!deletedUser) {
+//       console.log("no se encuentra el usuario");
+//     } else {
+//       console.log(deletedUser, "Usuario borrado");
+//     }
+//   } catch (error) {
+//     console.log("no se borro el usuario", error)
+//   }
 
-    // if (!user) {
-    //   console.log("no existe el usuario")
-    // } else {
-    //   console.log(user)
-    // }
+// };
 
-    console.log(user);
-  } catch (error) {
-    console.log("error al mostrar usuarios", error)
-  }
-}
-
-getUserByName("mAri")
+getTires()
