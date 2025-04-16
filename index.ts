@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, get, Schema } from "mongoose";
 import { connectDB } from "./config/mongo";
 
 connectDB();
@@ -8,6 +8,7 @@ interface TireSize extends Document {
   width: number;
   profile: number;
   rolled: number;
+  price: number;
 }
 
 // Esquema
@@ -15,6 +16,7 @@ const tireSchema: Schema = new Schema<TireSize>({
   width: { type: Number, required: true },
   profile: { type: Number, required: true },
   rolled: { type: Number, required: true },
+  price: { type: Number, required: true },
 });
 
 tireSchema.set("strict", true);
@@ -25,9 +27,10 @@ const Tire = mongoose.model<TireSize>("Tire", tireSchema);
 const createTire = async () => {
   try {
     const tire = new Tire({
-      width: 185,
-      profile: 60,
-      rolled: 15,
+      width: 175,
+      profile: 70,
+      rolled: 14,
+      price: 90000
     });
 
     await tire.save();
@@ -42,13 +45,14 @@ const getTires = async () => {
   try {
     const tires = await Tire.find();
     tires.forEach((t) => {
-      console.log(`ID: ${t._id} - ${t.width}/${t.profile}-${t.rolled}`,);
+      console.log(`ID: ${t._id} - ${t.width}/${t.profile}-${t.rolled} $${t.price}`,);
     });
   } catch (error) {
     console.log("Error al obtener neumáticos:", error);
   }
 };
 
+// Actualizar neumático
 const updateTire = async (id: string, body: Partial<TireSize>) => {
   try {
     const updatedTire = await Tire.findByIdAndUpdate(id, body, { new: true });
@@ -62,23 +66,7 @@ const updateTire = async (id: string, body: Partial<TireSize>) => {
   }
 };
 
-
-// const updateUser = async (id: string, body: object) => {
-//   try {
-//     const updatedUser = await User.findByIdAndUpdate(id, body, { new: true })
-//     if (!updatedUser) {
-//       console.log("no se encuentra el usuario");
-//     } else {
-//       console.log(updatedUser);
-//     }
-
-//   } catch (error) {
-//     console.log("error al actualizar usuario")
-//   }
-// }
-
-
-
+// Eliminar neumático
 const deleteTire = async (id: string) => {
   const deletedTire = await Tire.findByIdAndDelete(id)
   try {
@@ -93,9 +81,3 @@ const deleteTire = async (id: string) => {
 
 };
 
-// CRUD
-// createTire()
-// getTires()
-// updateTire()
-// updateTire("aquí_el_id", { profile: 65 });
-// deleteTire()
