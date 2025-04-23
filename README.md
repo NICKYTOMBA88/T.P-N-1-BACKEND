@@ -18,11 +18,12 @@ Este proyecto es una app básica en Node.js + TypeScript que gestiona un inventa
 
 ## ⚙️ Instalación
 
-1. Instala dependencias de desarrollo : `npm install` y configura la compilacion.
+1. Instala dependencias de desarrollo : `npm install` y configura la compilacion. dependencias de desarrolo con typescript y dependencia de produccion moongose
+2. procesos de ejecucion en los sripts
 
 ## 📝 Ejemplo de uso
 
 1. Crea un nuevo neumático : createTire()
 2. Listar todos los neumáticos : getTires()
-3. Actualiza un neumático : updateTire("id")
+3. Actualiza un neumático : updateTire("id",{})
 4. Elimina un neumático : deleteTire("id")
